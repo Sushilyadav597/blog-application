@@ -4,9 +4,12 @@
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Spring Security](https://img.shields.io/badge/Spring%20Security-6-green.svg)](https://spring.io/projects/spring-security)
 [![JWT](https://img.shields.io/badge/JWT-JJWT%200.12.6-blue.svg)](https://github.com/jwtk/jjwt)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg)](https://www.mysql.com/)
-[![OpenAPI](https://img.shields.io/badge/OpenAPI-Swagger%20UI-success.svg)](http://localhost:8080/swagger-ui/index.html)
-[![License](https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg)](LICENSE)
+[![MySQL](https://img.shields.io/badge/MySQL-Aiven%20Cloud-blue.svg)](https://aiven.io/)
+[![Render](https://img.shields.io/badge/Render-Live%20Deploy-success.svg)](https://blog-application-api-v1.onrender.com)
+[![Swagger UI](https://img.shields.io/badge/Swagger-Live%20Docs-brightgreen.svg)](https://blog-application-api-v1.onrender.com/swagger-ui/index.html)
+
+> 🌐 **Live Deployment URL:** [https://blog-application-api-v1.onrender.com](https://blog-application-api-v1.onrender.com)  
+> 📖 **Live Interactive Swagger UI:** [https://blog-application-api-v1.onrender.com/swagger-ui/index.html](https://blog-application-api-v1.onrender.com/swagger-ui/index.html)
 
 An industry-standard, production-ready **RESTful Blog Application API** engineered with **Java 21**, **Spring Boot 3.3.5**, **Spring Security 6**, **JSON Web Tokens (JWT)**, **Spring Data JPA / Hibernate**, and **MySQL 8**.
 
