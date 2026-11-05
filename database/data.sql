@@ -24,3 +24,4 @@ VALUES
 (1, 'Excellent introduction to Spring Boot 3 and Java 21! Looking forward to part 2.', 1, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (2, 'Clear explanation of JWT authentication filters and stateless sessions.', 2, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON DUPLICATE KEY UPDATE content = VALUES(content);
+
