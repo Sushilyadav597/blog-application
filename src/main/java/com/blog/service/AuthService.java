@@ -17,3 +17,4 @@ public interface AuthService {
 
     UserSummaryResponse getCurrentUserProfile(UserPrincipal currentUser);
 }
+

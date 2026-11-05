@@ -119,3 +119,4 @@ public class AuthServiceImpl implements AuthService {
         return userMapper.toUserSummaryResponse(user);
     }
 }
+

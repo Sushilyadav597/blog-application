@@ -45,3 +45,4 @@ public class PostRequest {
         this.content = content;
     }
 }
+

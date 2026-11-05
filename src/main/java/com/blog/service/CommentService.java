@@ -21,3 +21,4 @@ public interface CommentService {
 
     void deleteComment(Long id, UserPrincipal currentUser);
 }
+

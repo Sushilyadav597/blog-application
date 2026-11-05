@@ -40,3 +40,4 @@ app.jwt.expiration-ms=${JWT_EXPIRATION_MS:86400000}
 # ------------------------------------------------------------------------------
 springdoc.api-docs.path=/v3/api-docs
 springdoc.swagger-ui.path=/swagger-ui.html
+

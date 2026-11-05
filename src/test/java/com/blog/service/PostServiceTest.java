@@ -225,3 +225,4 @@ class PostServiceTest {
         verify(postRepository, times(1)).delete(samplePost);
     }
 }
+

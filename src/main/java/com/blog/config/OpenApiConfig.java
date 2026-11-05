@@ -49,3 +49,4 @@ public class OpenApiConfig {
                                         .description("Enter your valid JWT token to authenticate requests.")));
     }
 }
+

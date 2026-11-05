@@ -170,3 +170,4 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.status").value(401));
     }
 }
+

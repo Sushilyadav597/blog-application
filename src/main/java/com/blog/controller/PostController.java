@@ -136,3 +136,4 @@ public class PostController {
         return ResponseEntity.ok(new ApiResponse(true, "Post deleted successfully"));
     }
 }
+

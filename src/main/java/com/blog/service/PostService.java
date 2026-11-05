@@ -20,3 +20,4 @@ public interface PostService {
 
     void deletePost(Long id, UserPrincipal currentUser);
 }
+
