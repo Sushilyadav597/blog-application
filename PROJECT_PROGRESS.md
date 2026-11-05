@@ -4,7 +4,6 @@
 - **Project Name:** RESTful Blog Application API
 - **Target Audience:** Fresher Java Developer Portfolio (Industry Standard)
 - **Technology Stack:** Java 21, Spring Boot 3.3.5, Spring Security 6, Spring Data JPA, Hibernate, MySQL 8 / H2 Test, JWT (jjwt 0.12.6), Springdoc OpenAPI 2.6.0, JUnit 5, Mockito, MockMvc, Maven.
----
 ## Detailed Milestone Tracking
 | Phase | Description | Status | Verification & Deliverables |
 |---|---|---|---|
