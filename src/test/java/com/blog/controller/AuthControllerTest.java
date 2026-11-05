@@ -77,9 +77,10 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.token").value("mock-jwt-token"))
-                .andExpect(jsonPath("$.tokenType").value("Bearer"))
-                .andExpect(jsonPath("$.user.email").value("sushil@example.com"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.token").value("mock-jwt-token"))
+                .andExpect(jsonPath("$.data.tokenType").value("Bearer"))
+                .andExpect(jsonPath("$.data.user.email").value("sushil@example.com"));
     }
 
     @Test
@@ -95,6 +96,7 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.validationErrors.username").exists())
                 .andExpect(jsonPath("$.validationErrors.email").exists())
                 .andExpect(jsonPath("$.validationErrors.password").exists());
@@ -116,6 +118,7 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.message").value("Email is already registered: duplicate@example.com"));
     }
@@ -133,6 +136,7 @@ class AuthControllerTest {
                 .username("sushil")
                 .email("sushil@example.com")
                 .role(Role.ROLE_USER)
+                .createdAt(LocalDateTime.now())
                 .build();
 
         AuthResponse authResponse = AuthResponse.builder()
@@ -148,7 +152,8 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("valid-jwt-token"))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.token").value("valid-jwt-token"))
                 .andExpect(jsonPath("$.message").value("User logged in successfully"));
     }
 
@@ -167,7 +172,7 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.status").value(401));
     }
 }
-

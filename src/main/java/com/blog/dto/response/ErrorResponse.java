@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
- * Standardized error response payload returned on API failures.
+ * Standard API error response payload returned when an operation fails.
  */
 @Getter
 @Setter
@@ -23,8 +23,12 @@ import java.util.Map;
 @Schema(description = "Standard API error response payload")
 public class ErrorResponse {
 
-    @Schema(description = "Error timestamp", example = "2026-11-05T12:00:00")
-    private LocalDateTime timestamp;
+    @Schema(description = "Failure flag", example = "false")
+    @Builder.Default
+    private boolean success = false;
+
+    @Schema(description = "Detailed error message", example = "Post not found")
+    private String message;
 
     @Schema(description = "HTTP status code", example = "404")
     private int status;
@@ -32,29 +36,36 @@ public class ErrorResponse {
     @Schema(description = "HTTP error title", example = "Not Found")
     private String error;
 
-    @Schema(description = "Detailed error explanation", example = "Post not found with id : 99")
-    private String message;
+    @Schema(description = "Error timestamp", example = "2026-11-05T14:00:00")
+    private LocalDateTime timestamp;
 
-    @Schema(description = "Endpoint URI path where error originated", example = "/api/posts/99")
+    @Schema(description = "Endpoint URI where error originated", example = "/api/posts/99")
     private String path;
 
-    @Schema(description = "Map of field validation errors, present on 400 Bad Request")
+    @Schema(description = "Map of field-level validation errors on 400 Bad Request")
     private Map<String, String> validationErrors;
 
-    public ErrorResponse(LocalDateTime timestamp, int status, String error, String message, String path) {
-        this.timestamp = timestamp;
-        this.status = status;
-        this.error = error;
+    public ErrorResponse(boolean success, String message, int status) {
+        this.success = success;
         this.message = message;
-        this.path = path;
+        this.status = status;
+        this.timestamp = LocalDateTime.now();
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public boolean isSuccess() {
+        return success;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public int getStatus() {
@@ -73,12 +84,12 @@ public class ErrorResponse {
         this.error = error;
     }
 
-    public String getMessage() {
-        return message;
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getPath() {
@@ -97,4 +108,3 @@ public class ErrorResponse {
         this.validationErrors = validationErrors;
     }
 }
-

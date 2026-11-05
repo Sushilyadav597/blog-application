@@ -44,29 +44,27 @@ public class PostController {
     @PostMapping
     @Operation(summary = "Create a new blog post", description = "Allows authenticated users to publish a new blog post.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Post created successfully",
-                    content = @Content(schema = @Schema(implementation = PostResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Post created successfully"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Validation failed for title or content",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized - Missing or invalid token",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<PostResponse> createPost(
+    public ResponseEntity<ApiResponse<PostResponse>> createPost(
             @Valid @RequestBody PostRequest postRequest,
             @AuthenticationPrincipal UserPrincipal currentUser) {
         PostResponse postResponse = postService.createPost(postRequest, currentUser);
-        return new ResponseEntity<>(postResponse, HttpStatus.CREATED);
+        return new ResponseEntity<>(ApiResponse.success("Post created successfully", postResponse), HttpStatus.CREATED);
     }
 
     @GetMapping
-    @Operation(summary = "Get all published blog posts", description = "Public endpoint to retrieve blog posts with pagination, sorting, and title search.")
+    @Operation(summary = "Get all published blog posts", description = "Public endpoint to retrieve blog posts with pagination, sorting, search by title/content, and author filter.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Posts retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = PagedResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Posts retrieved successfully"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid pagination or sorting parameters",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<PagedResponse<PostResponse>> getAllPosts(
+    public ResponseEntity<ApiResponse<PagedResponse<PostResponse>>> getAllPosts(
             @Parameter(description = "Page number (0-based)")
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @Parameter(description = "Number of posts per page")
@@ -75,31 +73,33 @@ public class PostController {
             @RequestParam(value = "sortBy", defaultValue = "createdAt", required = false) String sortBy,
             @Parameter(description = "Sort direction (asc or desc)")
             @RequestParam(value = "sortDir", defaultValue = "desc", required = false) String sortDir,
-            @Parameter(description = "Optional search query to filter posts by title")
-            @RequestParam(value = "title", required = false) String title) {
+            @Parameter(description = "Filter posts matching title keyword")
+            @RequestParam(value = "title", required = false) String title,
+            @Parameter(description = "Filter posts matching content keyword")
+            @RequestParam(value = "content", required = false) String content,
+            @Parameter(description = "Filter posts created by a specific author ID")
+            @RequestParam(value = "authorId", required = false) Long authorId) {
 
-        PagedResponse<PostResponse> pagedResponse = postService.getAllPosts(page, size, sortBy, sortDir, title);
-        return ResponseEntity.ok(pagedResponse);
+        PagedResponse<PostResponse> pagedResponse = postService.getAllPosts(page, size, sortBy, sortDir, title, content, authorId);
+        return ResponseEntity.ok(ApiResponse.success("Posts retrieved successfully", pagedResponse));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get single blog post by ID", description = "Public endpoint to fetch detailed post information.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Post retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = PostResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Post retrieved successfully"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Post not found with given ID",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<PostResponse> getPostById(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse<PostResponse>> getPostById(@PathVariable("id") Long id) {
         PostResponse postResponse = postService.getPostById(id);
-        return ResponseEntity.ok(postResponse);
+        return ResponseEntity.ok(ApiResponse.success("Post retrieved successfully", postResponse));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update an existing blog post", description = "Allows only the original post author (or admin) to modify title and content.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Post updated successfully",
-                    content = @Content(schema = @Schema(implementation = PostResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Post updated successfully"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Validation failed",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized - Missing or invalid token",
@@ -109,19 +109,18 @@ public class PostController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Post not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<PostResponse> updatePost(
+    public ResponseEntity<ApiResponse<PostResponse>> updatePost(
             @PathVariable("id") Long id,
             @Valid @RequestBody PostRequest postRequest,
             @AuthenticationPrincipal UserPrincipal currentUser) {
         PostResponse postResponse = postService.updatePost(id, postRequest, currentUser);
-        return ResponseEntity.ok(postResponse);
+        return ResponseEntity.ok(ApiResponse.success("Post updated successfully", postResponse));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete an existing blog post", description = "Allows only the original post author (or admin) to delete a post.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Post deleted successfully",
-                    content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Post deleted successfully"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized - Missing or invalid token",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Forbidden - Current user is not the post author",
@@ -129,11 +128,10 @@ public class PostController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Post not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<ApiResponse> deletePost(
+    public ResponseEntity<ApiResponse<Void>> deletePost(
             @PathVariable("id") Long id,
             @AuthenticationPrincipal UserPrincipal currentUser) {
         postService.deletePost(id, currentUser);
-        return ResponseEntity.ok(new ApiResponse(true, "Post deleted successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Post deleted successfully", null));
     }
 }
-

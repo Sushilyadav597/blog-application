@@ -12,7 +12,13 @@ public interface PostService {
 
     PostResponse createPost(PostRequest postRequest, UserPrincipal currentUser);
 
-    PagedResponse<PostResponse> getAllPosts(int page, int size, String sortBy, String sortDir, String title);
+    PagedResponse<PostResponse> getAllPosts(int page, int size, String sortBy, String sortDir,
+                                           String title, String content, Long authorId);
+
+    // Overload for backward compatibility
+    default PagedResponse<PostResponse> getAllPosts(int page, int size, String sortBy, String sortDir, String title) {
+        return getAllPosts(page, size, sortBy, sortDir, title, null, null);
+    }
 
     PostResponse getPostById(Long id);
 
@@ -20,4 +26,3 @@ public interface PostService {
 
     void deletePost(Long id, UserPrincipal currentUser);
 }
-

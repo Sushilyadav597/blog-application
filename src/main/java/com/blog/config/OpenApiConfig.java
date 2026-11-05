@@ -25,6 +25,8 @@ public class OpenApiConfig {
                         .title("RESTful Blog Application API")
                         .description("Industry-standard RESTful Blog Application API built with Java 21, Spring Boot 3, " +
                                 "Spring Security 6, JWT Authentication, Hibernate, and MySQL 8.\n\n" +
+                                "### Swagger URL:\n" +
+                                "Access this documentation at `http://localhost:8080/swagger-ui/index.html` or `http://localhost:8080/swagger-ui.html`.\n\n" +
                                 "### How to Authenticate:\n" +
                                 "1. Register an account via `POST /api/auth/register` or login via `POST /api/auth/login`.\n" +
                                 "2. Copy the returned `token`.\n" +

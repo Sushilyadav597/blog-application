@@ -5,44 +5,46 @@
 [![Spring Security](https://img.shields.io/badge/Spring%20Security-6-green.svg)](https://spring.io/projects/spring-security)
 [![JWT](https://img.shields.io/badge/JWT-JJWT%200.12.6-blue.svg)](https://github.com/jwtk/jjwt)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg)](https://www.mysql.com/)
-[![OpenAPI](https://img.shields.io/badge/OpenAPI-Swagger%20UI-success.svg)](http://localhost:8080/swagger-ui.html)
+[![OpenAPI](https://img.shields.io/badge/OpenAPI-Swagger%20UI-success.svg)](http://localhost:8080/swagger-ui/index.html)
 [![License](https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg)](LICENSE)
 
-An industry-standard, production-ready **RESTful Blog Application API** engineered with **Java 21**, **Spring Boot 3**, **Spring Security 6**, **JSON Web Tokens (JWT)**, **Spring Data JPA / Hibernate**, and **MySQL 8**. 
+An industry-standard, production-ready **RESTful Blog Application API** engineered with **Java 21**, **Spring Boot 3.3.5**, **Spring Security 6**, **JSON Web Tokens (JWT)**, **Spring Data JPA / Hibernate**, and **MySQL 8**.
 
-Architected with strict adherence to **SOLID principles**, **Separation of Concerns**, **Layered Architecture**, and modern software engineering practices. Designed specifically as a premier showcase project for a **Fresher Java Full Stack / Backend Developer Portfolio**.
+Architected with strict adherence to **SOLID principles**, **Separation of Concerns**, **Layered Architecture**, and clean coding practices. Built without containerization dependencies (No Docker required) to run directly via **Eclipse**, **IntelliJ IDEA**, or **Maven CLI**.
 
 ---
 
 ## 📑 Table of Contents
 1. [Core Features](#-core-features)
 2. [Technology Stack](#-technology-stack)
-3. [Architecture & Project Structure](#-architecture--project-structure)
-4. [Database Design & ER Diagram](#-database-design--er-diagram)
-5. [API Endpoint Reference](#-api-endpoint-reference)
-6. [Security & Authentication Architecture](#-security--authentication-architecture)
-7. [Installation & Getting Started](#-installation--getting-started)
-8. [Running the Application](#-running-the-application)
-9. [Interactive API Documentation (Swagger / OpenAPI)](#-interactive-api-documentation-swagger--openapi)
-10. [Postman Collection & Automated Testing](#-postman-collection--automated-testing)
+3. [Project Folder Structure](#-project-folder-structure)
+4. [Database Design & Schema](#-database-design--schema)
+5. [Standardized API Response Envelopes](#-standardized-api-response-envelopes)
+6. [API Endpoint Reference](#-api-endpoint-reference)
+7. [Security & Authentication Architecture](#-security--authentication-architecture)
+8. [MySQL Configuration & Setup (No Docker)](#-mysql-configuration--setup-no-docker)
+9. [How to Run the Application](#-how-to-run-the-application)
+10. [Swagger / OpenAPI Documentation](#-swagger--openapi-documentation)
 11. [Unit & Integration Testing Suite](#-unit--integration-testing-suite)
-12. [Coding Standards & Portfolio Highlights](#-coding-standards--portfolio-highlights)
-13. [Future Roadmap](#-future-roadmap)
+12. [Postman Collection Guide](#-postman-collection-guide)
+13. [25-Day Assignment Plan](#-25-day-assignment-plan)
 14. [GitHub Submission Checklist](#-github-submission-checklist)
 
 ---
 
 ## 🌟 Core Features
 
-- **Robust User Authentication & Authorization**:
+- **User Authentication & Authorization**:
   - Secure account registration with input validation.
-  - BCrypt password hashing (never stored or exposed in plaintext).
+  - BCrypt password encryption (never stored or exposed in plaintext).
   - Stateless authentication with signed JWT tokens (HMAC-SHA256).
   - Role-based authorization (`ROLE_USER`, `ROLE_ADMIN`).
+  - Current authenticated user profile retrieval (`GET /api/auth/me`).
 - **Blog Post Management**:
-  - Public read-only access for viewing all published posts or single post details.
+  - Public read-only access for viewing published posts or single post details.
   - Authenticated post creation.
-  - Server-side pagination, dynamic sorting (by creation date, title, ID, etc.), and title keyword search.
+  - Server-side pagination and dynamic multi-field sorting.
+  - **Search & Filter**: Search by title, search by content, and filter by author ID.
   - Strict ownership validation (only original authors or administrators may edit or delete a post).
 - **Interactive Comment System**:
   - Authenticated comment submission on any published blog post.
@@ -50,9 +52,9 @@ Architected with strict adherence to **SOLID principles**, **Separation of Conce
   - Strict ownership validation for updating and deleting comments.
 - **Enterprise Error & Exception Handling**:
   - Centralized `@RestControllerAdvice` handling custom exceptions (`400`, `401`, `403`, `404`, `409`, `500`).
-  - Standardized JSON error response payload (`ErrorResponse`) containing timestamp, HTTP status, message, path, and detailed validation maps.
+  - Standardized JSON responses (`success: true/false`, `message`, `data`, `status`).
 - **Interactive API Documentation**:
-  - Embedded **Springdoc OpenAPI 3 / Swagger UI** with Bearer Token authorization support.
+  - Embedded **Springdoc OpenAPI 3 / Swagger UI** at `http://localhost:8080/swagger-ui/index.html` with Bearer Token authorization.
 
 ---
 
@@ -60,156 +62,175 @@ Architected with strict adherence to **SOLID principles**, **Separation of Conce
 
 | Layer | Technology | Details / Version |
 |---|---|---|
-| **Language** | Java 21 LTS | Pattern matching, records, virtual-thread compatibility |
-| **Framework** | Spring Boot | 3.3.5 (Latest stable Spring Framework 6.1) |
-| **Security** | Spring Security 6 | Modern `SecurityFilterChain`, stateless `SessionCreationPolicy` |
+| **Language** | Java 21 LTS | Records, Pattern matching, virtual-thread compatibility |
+| **Framework** | Spring Boot | 3.3.5 (Spring Framework 6.1) |
+| **Security** | Spring Security 6 | Modern `SecurityFilterChain`, stateless `SessionCreationPolicy.STATELESS` |
 | **Authentication** | JJWT | 0.12.6 (`jjwt-api`, `jjwt-impl`, `jjwt-jackson`) |
-| **Persistence** | Spring Data JPA / Hibernate | Hibernate 6.5, Declarative `@Transactional` |
-| **Database** | MySQL 8 / H2 | MySQL 8 in production/staging; in-memory H2 for isolated testing |
+| **Persistence** | Spring Data JPA / Hibernate | Hibernate ORM, Declarative `@Transactional` |
+| **Database** | MySQL 8 / H2 Test | MySQL 8 (`blog_db`), in-memory H2 for isolated unit/integration tests |
 | **Validation** | Jakarta Bean Validation | `@Valid`, `@NotBlank`, `@Email`, `@Size` |
-| **Documentation** | Springdoc OpenAPI | 2.6.0 with Swagger UI (`/swagger-ui.html`) |
+| **Documentation** | Springdoc OpenAPI | 2.6.0 with Swagger UI (`/swagger-ui/index.html`) |
 | **Build Tool** | Apache Maven | Maven 3.9+ |
 | **Testing** | JUnit 5, Mockito, MockMvc | 44 comprehensive unit and web integration tests |
-| **Utility** | Project Lombok | Boilerplate elimination with manual fallback accessors |
+| **Development** | Eclipse / IntelliJ / VS Code | Native IDE compatibility (No Docker needed) |
 
 ---
 
-## 🏗 Architecture & Project Structure
-
-The codebase strictly follows a clean **Layered Architecture**:
+## 🏗 Project Folder Structure
 
 ```
-com.blog
-|
-|-- config                  # Infrastructure configurations (OpenAPI / Swagger UI)
-|   |-- OpenApiConfig.java
-|
-|-- controller              # REST API Controllers (No business logic; request orchestration)
-|   |-- AuthController.java
-|   |-- PostController.java
-|   |-- CommentController.java
-|
-|-- service                 # Service Interfaces (Business contracts)
-|   |-- AuthService.java
-|   |-- PostService.java
-|   |-- CommentService.java
-|   |-- impl                # Service Implementations (Core business logic, transaction boundaries)
-|       |-- AuthServiceImpl.java
-|       |-- PostServiceImpl.java
-|       |-- CommentServiceImpl.java
-|
-|-- repository              # Spring Data JPA Repositories (Data access layer)
-|   |-- UserRepository.java
-|   |-- PostRepository.java
-|   |-- CommentRepository.java
-|
-|-- entity                  # JPA Entities (Database table mappings)
-|   |-- Role.java           # Security Role Enum (ROLE_USER, ROLE_ADMIN)
-|   |-- User.java
-|   |-- Post.java
-|   |-- Comment.java
-|
-|-- dto                     # Data Transfer Objects (Strict boundary protection)
-|   |-- request             # Incoming payload schemas with Jakarta Validation
-|   |   |-- RegisterRequest.java
-|   |   |-- LoginRequest.java
-|   |   |-- PostRequest.java
-|   |   |-- CommentRequest.java
-|   |-- response            # Outgoing safe payloads (No passwords exposed)
-|       |-- AuthResponse.java
-|       |-- UserSummaryResponse.java
-|       |-- PostResponse.java
-|       |-- CommentResponse.java
-|       |-- PagedResponse.java
-|       |-- ApiResponse.java
-|       |-- ErrorResponse.java
-|
-|-- security                # Security filters, JWT providers, and UserDetails
-|   |-- CustomUserDetailsService.java
-|   |-- UserPrincipal.java
-|   |-- JwtTokenProvider.java
-|   |-- JwtAuthenticationFilter.java
-|   |-- JwtAuthenticationEntryPoint.java
-|   |-- SecurityConfig.java
-|
-|-- exception               # Custom exceptions and GlobalExceptionHandler
-|   |-- ResourceNotFoundException.java      # 404 Not Found
-|   |-- EmailAlreadyExistsException.java    # 409 Conflict
-|   |-- UnauthorizedException.java          # 401 Unauthorized
-|   |-- BadRequestException.java            # 400 Bad Request
-|   |-- GlobalExceptionHandler.java         # @RestControllerAdvice
-|
-|-- mapper                  # Explicit Entity-to-DTO Mappers
-|   |-- UserMapper.java
-|   |-- PostMapper.java
-|   |-- CommentMapper.java
-|
-|-- BlogApplication.java    # Spring Boot Main Class
+blog-application-api/
+│
+├── src/main/java/com/blog/
+│   ├── config/
+│   │   └── OpenApiConfig.java              # Swagger / OpenAPI Configuration
+│   ├── controller/
+│   │   ├── AuthController.java             # User Authentication & Profile
+│   │   ├── PostController.java             # Post CRUD, Pagination, Search & Filter
+│   │   └── CommentController.java          # Comment CRUD
+│   ├── service/
+│   │   ├── AuthService.java                # Authentication Contract
+│   │   ├── PostService.java                # Post Business Logic Contract
+│   │   ├── CommentService.java             # Comment Business Logic Contract
+│   │   └── impl/
+│   │       ├── AuthServiceImpl.java        # Registration, Login, Token Issuance
+│   │       ├── PostServiceImpl.java        # Post Business Logic & Ownership Checks
+│   │       └── CommentServiceImpl.java     # Comment Business Logic & Ownership Checks
+│   ├── repository/
+│   │   ├── UserRepository.java             # User Data Access
+│   │   ├── PostRepository.java             # Post Data Access, Search Query & Paging
+│   │   └── CommentRepository.java          # Comment Data Access & Counting
+│   ├── entity/
+│   │   ├── User.java                       # User Entity (One-to-Many Posts & Comments)
+│   │   ├── Post.java                       # Post Entity (Many-to-One User, One-to-Many Comments)
+│   │   ├── Comment.java                    # Comment Entity (Many-to-One User & Post)
+│   │   └── Role.java                       # Security Role (ROLE_USER, ROLE_ADMIN)
+│   ├── enums/
+│   │   └── Role.java                       # Standard Enum Location
+│   ├── dto/
+│   │   ├── request/
+│   │   │   ├── RegisterRequest.java        # Registration Payload
+│   │   │   ├── LoginRequest.java           # Login Payload
+│   │   │   ├── PostRequest.java            # Post Title & Content Payload
+│   │   │   └── CommentRequest.java         # Comment Content Payload
+│   │   └── response/
+│   │       ├── ApiResponse.java            # Generic API Response Wrapper {success, message, data}
+│   │       ├── AuthResponse.java           # Token & User Profile
+│   │       ├── UserSummaryResponse.java    # Safe Profile (Zero password exposure)
+│   │       ├── PostResponse.java           # Post Details with Author Summary
+│   │       ├── CommentResponse.java        # Comment Details with Author Summary
+│   │       ├── PagedResponse.java          # Paginated Metadata & Records
+│   │       └── ErrorResponse.java          # Standard Error Payload {success: false, message, status}
+│   ├── security/
+│   │   ├── CustomUserDetailsService.java   # Spring Security UserDetails Loader
+│   │   ├── UserPrincipal.java              # Authenticated User Adapter
+│   │   ├── JwtTokenProvider.java           # JWT Generation & Cryptographic Validation
+│   │   ├── JwtAuthenticationFilter.java    # OncePerRequestFilter for Bearer Tokens
+│   │   ├── JwtAuthenticationEntryPoint.java# 401 Unauthorized JSON Handler
+│   │   └── SecurityConfig.java             # SecurityFilterChain, CORS, BCrypt
+│   ├── exception/
+│   │   ├── ResourceNotFoundException.java   # 404 Not Found
+│   │   ├── EmailAlreadyExistsException.java # 409 Conflict
+│   │   ├── UnauthorizedException.java       # 401 Unauthorized
+│   │   ├── BadRequestException.java         # 400 Bad Request
+│   │   └── GlobalExceptionHandler.java      # Centralized @RestControllerAdvice
+│   ├── mapper/
+│   │   ├── UserMapper.java                 # Entity to DTO Mapper
+│   │   ├── PostMapper.java                 # Entity to DTO Mapper
+│   │   └── CommentMapper.java              # Entity to DTO Mapper
+│   └── BlogApplication.java                # Spring Boot Entry Point
+│
+├── src/main/resources/
+│   ├── application.properties              # MySQL 8 Configuration
+│   └── application-dev.properties          # Standalone H2 Dev Profile
+│
+├── src/test/java/com/blog/                 # 44 Automated Unit & MockMvc Tests
+│
+├── database/
+│   ├── schema.sql                          # MySQL 8 DDL Database Schema Script
+│   └── data.sql                            # Initial Seed Data Script
+│
+├── postman/
+│   └── Blog_Application_API.postman_collection.json # Complete Postman Collection
+│
+├── README.md                               # Project Documentation
+├── pom.xml                                 # Maven Build Configuration
+└── .gitignore                              # Git Exclusion Rules
 ```
 
 ---
 
-## 🗄 Database Design & ER Diagram
+## 🗄 Database Design & Schema
 
-### Entity-Relationship Diagram (ERD)
+### Relational Schema (`blog_db`)
 
-```mermaid
-erDiagram
-    USERS ||--o{ POSTS : "authors (1 : N)"
-    USERS ||--o{ COMMENTS : "writes (1 : N)"
-    POSTS ||--o{ COMMENTS : "contains (1 : N)"
+```
+USERS
+├── id (BIGINT, PK, AUTO_INCREMENT)
+├── username (VARCHAR(50), NOT NULL)
+├── email (VARCHAR(100), NOT NULL, UNIQUE)
+├── password (VARCHAR(255), NOT NULL)
+├── role (VARCHAR(20), NOT NULL)
+└── created_at (TIMESTAMP, NOT NULL)
 
-    USERS {
-        bigint id PK
-        varchar(50) username
-        varchar(100) email UK
-        varchar(255) password
-        varchar(20) role
-        timestamp created_at
-    }
+POSTS
+├── id (BIGINT, PK, AUTO_INCREMENT)
+├── title (VARCHAR(200), NOT NULL)
+├── content (LONGTEXT, NOT NULL)
+├── author_id (BIGINT, FK -> USERS.id, ON DELETE CASCADE)
+├── created_at (TIMESTAMP, NOT NULL)
+└── updated_at (TIMESTAMP, NOT NULL)
 
-    POSTS {
-        bigint id PK
-        varchar(200) title
-        longtext content
-        bigint author_id FK
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    COMMENTS {
-        bigint id PK
-        text content
-        bigint post_id FK
-        bigint author_id FK
-        timestamp created_at
-        timestamp updated_at
-    }
+COMMENTS
+├── id (BIGINT, PK, AUTO_INCREMENT)
+├── content (TEXT, NOT NULL)
+├── post_id (BIGINT, FK -> POSTS.id, ON DELETE CASCADE)
+├── author_id (BIGINT, FK -> USERS.id, ON DELETE CASCADE)
+├── created_at (TIMESTAMP, NOT NULL)
+└── updated_at (TIMESTAMP, NOT NULL)
 ```
 
-### Table Specifications
+- **Relationships**:
+  - `User 1 ──── N Posts`
+  - `User 1 ──── N Comments`
+  - `Post 1 ──── N Comments`
 
-1. **`users`**:
-   - `id`: `BIGINT AUTO_INCREMENT PRIMARY KEY`
-   - `username`: `VARCHAR(50) NOT NULL`
-   - `email`: `VARCHAR(100) NOT NULL UNIQUE`
-   - `password`: `VARCHAR(255) NOT NULL` (BCrypt hash)
-   - `role`: `VARCHAR(20) NOT NULL DEFAULT 'ROLE_USER'` (`ROLE_USER`, `ROLE_ADMIN`)
-   - `created_at`: `TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL`
-2. **`posts`**:
-   - `id`: `BIGINT AUTO_INCREMENT PRIMARY KEY`
-   - `title`: `VARCHAR(200) NOT NULL`
-   - `content`: `LONGTEXT NOT NULL`
-   - `author_id`: `BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE`
-   - `created_at`: `TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL`
-   - `updated_at`: `TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL`
-3. **`comments`**:
-   - `id`: `BIGINT AUTO_INCREMENT PRIMARY KEY`
-   - `content`: `TEXT NOT NULL`
-   - `post_id`: `BIGINT NOT NULL REFERENCES posts(id) ON DELETE CASCADE`
-   - `author_id`: `BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE`
-   - `created_at`: `TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL`
-   - `updated_at`: `TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL`
+---
+
+## 📦 Standardized API Response Envelopes
+
+### Successful Response Format (`ApiResponse<T>`)
+```json
+{
+  "success": true,
+  "message": "Post created successfully",
+  "data": {
+    "id": 1,
+    "title": "Getting Started with Spring Boot 3",
+    "content": "Spring Boot 3 introduces support for Java 21...",
+    "author": {
+      "id": 1,
+      "username": "sushil",
+      "email": "sushil@example.com",
+      "role": "ROLE_USER"
+    },
+    "commentCount": 0,
+    "createdAt": "2026-11-05T12:00:00"
+  }
+}
+```
+
+### Error Response Format (`ErrorResponse`)
+```json
+{
+  "success": false,
+  "message": "Post not found with id : '99'",
+  "status": 404,
+  "error": "Not Found",
+  "timestamp": "2026-11-05T12:00:00",
+  "path": "/api/posts/99"
+}
+```
 
 ---
 
@@ -217,269 +238,157 @@ erDiagram
 
 ### 1. Authentication Endpoints (`/api/auth`)
 
-| Method | Endpoint | Access | Description | Status Codes |
+| Method | Endpoint | Access | Description | Status |
 |---|---|---|---|---|
-| `POST` | `/api/auth/register` | Public | Register new user account & return JWT | `201 Created`, `400 Bad Request`, `409 Conflict` |
-| `POST` | `/api/auth/login` | Public | Authenticate credentials & return JWT | `200 OK`, `400 Bad Request`, `401 Unauthorized` |
-| `GET` | `/api/auth/me` | Authenticated | Fetch current authenticated user profile | `200 OK`, `401 Unauthorized` |
+| `POST` | `/api/auth/register` | Public | Register new user account & return JWT | `201 Created` |
+| `POST` | `/api/auth/login` | Public | Authenticate user & return JWT | `200 OK` |
+| `GET` | `/api/auth/me` | Authenticated | Retrieve currently logged-in user profile | `200 OK` |
 
-#### Sample Request (`POST /api/auth/register`):
-```json
-{
-  "username": "sushil",
-  "email": "sushil@example.com",
-  "password": "Password@123"
-}
-```
+### 2. Blog Post Endpoints (`/api/posts`)
 
-#### Sample Response (`201 Created`):
-```json
-{
-  "message": "User registered successfully",
-  "token": "eyJhbGciOiJIUzUxMiJ9...",
-  "tokenType": "Bearer",
-  "user": {
-    "id": 1,
-    "username": "sushil",
-    "email": "sushil@example.com",
-    "role": "ROLE_USER",
-    "createdAt": "2026-11-05T12:00:00"
-  }
-}
-```
-
----
-
-### 2. Post Endpoints (`/api/posts`)
-
-| Method | Endpoint | Access | Description | Status Codes |
+| Method | Endpoint | Access | Description | Status |
 |---|---|---|---|---|
-| `GET` | `/api/posts` | Public | List posts with pagination, sorting, search | `200 OK`, `400 Bad Request` |
-| `GET` | `/api/posts/{id}` | Public | Retrieve single post by ID | `200 OK`, `404 Not Found` |
-| `POST` | `/api/posts` | Authenticated | Create a new blog post | `201 Created`, `400 Bad Request`, `401 Unauthorized` |
-| `PUT` | `/api/posts/{id}` | Owner / Admin | Update existing post | `200 OK`, `400`, `401`, `403 Forbidden`, `404` |
-| `DELETE` | `/api/posts/{id}` | Owner / Admin | Delete post and associated comments | `200 OK`, `401`, `403 Forbidden`, `404` |
+| `GET` | `/api/posts` | Public | List posts with pagination, sorting, search by title/content, and author filter | `200 OK` |
+| `GET` | `/api/posts/{id}` | Public | Retrieve single post by ID | `200 OK` |
+| `POST` | `/api/posts` | Authenticated | Create a new blog post | `201 Created` |
+| `PUT` | `/api/posts/{id}` | Owner / Admin | Update post (Title & Content) | `200 OK`, `403 Forbidden` |
+| `DELETE` | `/api/posts/{id}` | Owner / Admin | Delete post and associated comments | `200 OK`, `403 Forbidden` |
 
 #### Query Parameters for `GET /api/posts`:
 - `page`: Page index (default `0`)
-- `size`: Items per page (default `10`, maximum `100`)
-- `sortBy`: Field name to sort by (default `createdAt`, supports `title`, `id`, `updatedAt`)
-- `sortDir`: Sort direction (default `desc`, supports `asc`)
-- `title`: Optional substring search filter on post titles
-
----
+- `size`: Page size (default `10`)
+- `sortBy`: Property to sort by (`createdAt`, `title`, `id`, `updatedAt`)
+- `sortDir`: Sort direction (`desc` or `asc`)
+- `title`: Filter posts matching title keyword
+- `content`: Filter posts matching content keyword
+- `authorId`: Filter posts created by a specific user ID
 
 ### 3. Comment Endpoints (`/api/posts/{postId}/comments` & `/api/comments/{id}`)
 
-| Method | Endpoint | Access | Description | Status Codes |
+| Method | Endpoint | Access | Description | Status |
 |---|---|---|---|---|
-| `GET` | `/api/posts/{postId}/comments` | Public | Get all comments for a post | `200 OK`, `404 Not Found` |
-| `GET` | `/api/comments/{id}` | Public | Get single comment by ID | `200 OK`, `404 Not Found` |
-| `POST` | `/api/posts/{postId}/comments` | Authenticated | Post a comment on a blog post | `201 Created`, `400`, `401`, `404` |
-| `PUT` | `/api/comments/{id}` | Owner / Admin | Update existing comment content | `200 OK`, `400`, `401`, `403 Forbidden`, `404` |
-| `DELETE` | `/api/comments/{id}` | Owner / Admin | Delete comment | `200 OK`, `401`, `403 Forbidden`, `404` |
+| `GET` | `/api/posts/{postId}/comments` | Public | Get all comments for a post | `200 OK` |
+| `GET` | `/api/comments/{id}` | Public | Get single comment by ID | `200 OK` |
+| `POST` | `/api/posts/{postId}/comments` | Authenticated | Add a comment to a blog post | `201 Created` |
+| `PUT` | `/api/comments/{id}` | Owner / Admin | Update comment content | `200 OK`, `403 Forbidden` |
+| `DELETE` | `/api/comments/{id}` | Owner / Admin | Delete comment | `200 OK`, `403 Forbidden` |
 
 ---
 
-## 🔒 Security & Authentication Architecture
+## 🛢 MySQL Configuration & Setup (No Docker)
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Client
-    participant AuthFilter as JwtAuthenticationFilter
-    participant Provider as JwtTokenProvider
-    participant UserDetails as CustomUserDetailsService
-    participant Context as SecurityContextHolder
-    participant Controller as Secured Controller
+### 1. Database Connection Properties (`application.properties`)
+```properties
+spring.datasource.url=jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:blog_db}?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+spring.datasource.username=${DB_USERNAME:root}
+spring.datasource.password=${DB_PASSWORD:root}
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
-    Client->>AuthFilter: HTTP Request with "Authorization: Bearer <token>"
-    AuthFilter->>Provider: validateToken(token)
-    alt Token Invalid / Expired
-        Provider-->>AuthFilter: false
-        AuthFilter->>Client: 401 Unauthorized (via JwtAuthenticationEntryPoint)
-    else Token Valid
-        Provider-->>AuthFilter: true
-        AuthFilter->>Provider: getUserIdFromJWT(token)
-        Provider-->>AuthFilter: userId
-        AuthFilter->>UserDetails: loadUserById(userId)
-        UserDetails-->>AuthFilter: UserPrincipal
-        AuthFilter->>Context: setAuthentication(auth)
-        AuthFilter->>Controller: Forward request
-        Controller-->>Client: 200 / 201 Response
-    end
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 ```
 
-### Key Security Decisions:
-1. **Stateless Session Management**: No server-side HTTP sessions (`SessionCreationPolicy.STATELESS`), allowing the API to scale horizontally across containers.
-2. **Never Exposing Passwords**: The `User` password is encrypted with `BCryptPasswordEncoder`. Response DTOs (`UserSummaryResponse`) intentionally exclude password fields.
-3. **Ownership Verification**: Services inspect the authenticated `UserPrincipal` and verify that `post.getAuthor().getId().equals(currentUser.getId()) || currentUser.getRole() == Role.ROLE_ADMIN` before modifying any post or comment. Unauthorized edits return `403 Forbidden`.
-4. **Environment Variables**: JWT secret keys and database credentials are read from environment variables with safe development fallbacks, eliminating the risk of accidental secret leaks in version control.
-
----
-
-## ⚙️ Installation & Getting Started
-
-### Prerequisites
-- **JDK 21** (Java Development Kit 21 or higher)
-- **Apache Maven 3.8+**
-- **MySQL 8.0+** (Optional: the project also includes a standalone dev profile with an in-memory database)
-
-### Clone the Repository
+### 2. Execute SQL Schema Script
+Using MySQL Command Line or MySQL Workbench:
 ```bash
-git clone https://github.com/your-username/blog-application-api.git
-cd blog-application-api
+mysql -u root -p < database/schema.sql
 ```
-
-### Database Configuration (MySQL 8)
-1. Start your local MySQL service.
-2. Run the provided SQL initialization script:
+*(Optional) Seed initial users and posts:*
 ```bash
-mysql -u root -p < schema.sql
-```
-*(Optional) Seed sample data:*
-```bash
-mysql -u root -p < data.sql
-```
-
-### Configure Environment Variables
-Copy `application.properties.example` to `application.properties` or set your environment variables:
-```bash
-# Optional: Set custom environment variables
-export DB_HOST=localhost
-export DB_PORT=3306
-export DB_NAME=blog_application
-export DB_USERNAME=root
-export DB_PASSWORD=your_password
-export JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-export JWT_EXPIRATION_MS=86400000
+mysql -u root -p < database/data.sql
 ```
 
 ---
 
-## 🚀 Running the Application
+## 🚀 How to Run the Application
 
-### Option A: Standard Production Mode (MySQL 8)
-```bash
-# Build the project
-mvn clean package
+The project does **NOT** require Docker. It runs directly on any computer using Java 21 and Maven.
 
-# Run the packaged JAR
-java -jar target/blog-application-api-1.0.0.jar
-```
-Or with Maven Spring Boot plugin:
+### Method 1: Run via Maven (Terminal)
 ```bash
 mvn spring-boot:run
 ```
 
-### Option B: Standalone Development / Demo Mode (No MySQL Required)
-If you want to immediately evaluate or showcase the API without installing or configuring a local MySQL instance, use the built-in `dev` profile (uses embedded H2 configured in MySQL compatibility mode):
+### Method 2: Run Executable JAR
 ```bash
-java -jar target/blog-application-api-1.0.0.jar --spring.profiles.active=dev
+mvn clean package -DskipTests
+java -jar target/blog-application-api-1.0.0.jar
 ```
-*Note: In `dev` profile, the H2 Web Console is available at `http://localhost:8080/h2-console` (JDBC URL: `jdbc:h2:mem:blog_application`, User: `sa`, Password: empty).*
+
+### Method 3: Run in Eclipse / IntelliJ IDEA
+1. Open Eclipse or IntelliJ IDEA.
+2. Select **File → Open Project / Import Existing Maven Projects**.
+3. Choose the project directory: `blog-application-api`.
+4. Locate `com.blog.BlogApplication.java`.
+5. Right-click → **Run As → Java Application** (or Spring Boot App).
 
 ---
 
-## 📖 Interactive API Documentation (Swagger / OpenAPI)
+## 📖 Swagger / OpenAPI Documentation
 
-Once the application is running, access the interactive Swagger UI documentation:
+Once running, access the interactive API documentation:
 
-📍 **Swagger UI URL:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)  
-📍 **OpenAPI JSON Spec:** [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+📍 **Swagger UI:** [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)  
+📍 **OpenAPI JSON:** [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 
 ### How to Authenticate in Swagger UI:
-1. Open [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html).
-2. Execute `POST /api/auth/register` or `POST /api/auth/login`.
-3. Copy the returned `token` value.
+1. Open [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html).
+2. Expand `Authentication Management` → `POST /api/auth/register` or `POST /api/auth/login`.
+3. Submit request and copy the returned `token` from `data.token`.
 4. Click the green **Authorize 🔓** button in the top-right corner.
-5. Paste your token (no need to manually type `Bearer `, Swagger formats it automatically).
-6. Click **Authorize** and then **Close**. All secured endpoints are now unlocked for testing!
-
----
-
-## 📬 Postman Collection & Automated Testing
-
-A complete Postman collection is included in the project under:
-📁 `postman/Blog_Application_API.postman_collection.json`
-
-### Features of the Postman Collection:
-- **Collection-Level Bearer Token Variable**: Includes preconfigured `{{jwt_token}}`, `{{baseUrl}}`, `{{postId}}`, and `{{commentId}}` variables.
-- **Automated Token Capture**: The test scripts on `Register` and `Login` automatically save the JWT token to the collection variable. Subsequent requests automatically inherit this token!
-- **Complete Test Scenarios**: Includes all endpoints with pre-populated sample requests, expected responses, and validation tests.
-
-### How to Import:
-1. Open Postman.
-2. Click **Import** (top left).
-3. Select `postman/Blog_Application_API.postman_collection.json`.
-4. Ensure your server is running on `http://localhost:8080`.
-5. Send `1. Authentication -> Register New User` or `Login User` first, then run any Post or Comment request!
+5. Paste the token into the value field and click **Authorize**.
 
 ---
 
 ## 🧪 Unit & Integration Testing Suite
 
-The project includes **44 automated tests** covering security, service business logic, DTO mapping, and MockMvc HTTP controllers.
-
-### Execute All Tests:
+Execute the complete test suite of **44 automated tests**:
 ```bash
 mvn clean test
 ```
 
 ### Test Coverage Highlights:
-- **`JwtTokenProviderTest`**: Token creation, signing key integrity, expiration handling, signature tampering rejection, subject extraction.
-- **`AuthServiceTest`**: User registration, duplicate email rejection (`409 Conflict`), duplicate username validation (`400 Bad Request`), login credential verification, bad password rejection.
-- **`PostServiceTest`**: Post creation, pagination & sorting logic, search filtering, post retrieval, author update success, non-author update denial (`403 Forbidden`), admin override permissions.
-- **`CommentServiceTest`**: Comment publishing, comment listing per post, ownership verification for comment updates and deletions (`403 Forbidden`), admin deletion rights.
-- **`AuthControllerTest` (MockMvc)**: HTTP `POST /api/auth/register` (201 Created), validation errors map (`400 Bad Request`), HTTP `POST /api/auth/login` (200 OK & 401 Unauthorized).
-- **`PostControllerTest` (MockMvc)**: Public `GET /api/posts` (200 OK), unauthenticated mutation rejection (401 Unauthorized), authenticated creation (201 Created), ownership failure handling (403 Forbidden).
-- **`CommentControllerTest` (MockMvc)**: Public `GET /api/posts/{postId}/comments` (200 OK), secured comment creation, ownership validation.
+- **`JwtTokenProviderTest`**: Token generation, signature verification, expiration check, subject extraction.
+- **`AuthServiceTest`**: User registration, duplicate email handling (`409 Conflict`), username validation, login authentication.
+- **`PostServiceTest`**: Post creation, pagination, sorting, title search, content search, author update, non-author update denial (`403 Forbidden`), admin deletion rights.
+- **`CommentServiceTest`**: Comment publishing, post existence check, ownership verification for updates and deletions (`403 Forbidden`).
+- **`AuthControllerTest` (MockMvc)**: End-to-end registration (201), validation errors map (400), login (200), bad credentials (401).
+- **`PostControllerTest` (MockMvc)**: Public post retrieval, secured post creation, ownership enforcement (403).
+- **`CommentControllerTest` (MockMvc)**: Public comment retrieval, secured comment creation, ownership enforcement (403).
 
 ---
 
-## 💎 Coding Standards & Portfolio Highlights
+## 📬 Postman Collection Guide
 
-For senior software engineers and recruiters reviewing this codebase, note the following architectural choices:
+A complete Postman collection is located at:
+📂 [postman/Blog_Application_API.postman_collection.json](file:///C:/Users/Sushi/OneDrive/Attachments/Desktop/blog%20application/postman/Blog_Application_API.postman_collection.json)
 
-1. **Constructor-Based Dependency Injection**:
-   - Zero field injection (`@Autowired` on private fields is completely avoided). All dependencies are injected via explicit constructors, facilitating deterministic unit testing and immutability.
-2. **DTO Isolation**:
-   - Database entities never escape the service layer into web controller responses. DTOs insulate internal database schemas from public contract changes and avoid infinite recursion issues.
-3. **Jakarta Bean Validation**:
-   - Strict validation applied on incoming models (`@NotBlank`, `@Size`, `@Email`). All violations are caught and cleanly mapped to a structured field-to-message map in `ErrorResponse`.
-4. **Idempotency & HTTP Semantics**:
-   - Strict adherence to REST principles: `GET` is safe and idempotent, `POST` creates resources with `201 Created`, `PUT` updates with `200 OK`, `DELETE` returns confirmation with `200 OK`.
-5. **Clean Repository & No Hardcoded Secrets**:
-   - All sensitive credentials, tokens, and keys are externalized.
-   - Comprehensive `.gitignore` protects against committing compiled binaries, IDE caches, and environment secrets.
+- **Automated Token Capture**: Running `Register` or `Login` automatically saves the JWT token into the collection variable `{{jwt_token}}`.
+- All requests automatically use the Bearer token without manual copying.
 
 ---
 
-## 🔮 Future Roadmap
+## 📅 25-Day Assignment Plan
 
-- [ ] Add Redis caching for frequently accessed blog posts (`@Cacheable`).
-- [ ] Implement Refresh Token rotation for long-lived sessions.
-- [ ] Add user avatar image upload integration (Amazon S3 / Google Cloud Storage).
-- [ ] Support post tags and category filters.
-- [ ] Implement rate limiting using Bucket4j.
-- [ ] Add Dockerfile and docker-compose.yml for containerized multi-container orchestration.
+- **Day 1–2**: Requirement analysis, layered architecture design, API contract planning.
+- **Day 3–5**: Database modeling, MySQL schema (`database/schema.sql`), JPA entities (`User`, `Post`, `Comment`).
+- **Day 6–10**: Spring Data repositories, Post and Comment CRUD APIs, pagination, sorting, search.
+- **Day 11–13**: Spring Security 6, JWT generation/validation, custom filter, role-based authorization.
+- **Day 14–16**: Unit and integration testing with JUnit 5, Mockito, and Spring Boot MockMvc (44 tests).
+- **Day 17–18**: Springdoc OpenAPI / Swagger UI integration and Postman collection creation.
+- **Day 19–21**: Code refactoring, SOLID principles adherence, zero sensitive data leakage checks.
+- **Day 22–25**: Final build verification (`mvn clean test`), README documentation, GitHub commit and push.
 
 ---
 
 ## 👨‍💻 GitHub Submission Checklist
 
-- [x] All 44 automated tests pass (`mvn clean test` -> 0 failures, 0 errors).
-- [x] Application compiles and packages cleanly (`mvn clean package` -> `BUILD SUCCESS`).
-- [x] Live end-to-end API workflows verified with live server execution.
-- [x] `schema.sql` and `data.sql` database scripts created.
-- [x] `application.properties.example` template provided.
-- [x] Postman collection created and tested (`postman/Blog_Application_API.postman_collection.json`).
-- [x] Interactive OpenAPI Swagger UI configured at `/swagger-ui.html`.
-- [x] Strict `.gitignore` created (excludes `target/`, `.env`, logs, and IDE files).
-- [x] Progress tracked across all development stages in `PROJECT_PROGRESS.md`.
-
----
-
-## 📄 License
-This project is open-source and available under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0.html).
-
+- [x] No Docker files present (pure local Java 21 / Maven / IDE project).
+- [x] Clean `.gitignore` active (strictly ignores `target/`, `.env`, logs, and IDE caches).
+- [x] MySQL database name set to `blog_db` (`jdbc:mysql://localhost:3306/blog_db`).
+- [x] Database script placed in `database/schema.sql`.
+- [x] Standard response format implemented: `{ "success": true, "message": "...", "data": {} }`.
+- [x] Search by title, search by content, and filter by author implemented.
+- [x] All 44 automated tests passing (`mvn clean test`).
+- [x] Executable JAR built (`mvn clean package -DskipTests`).
+- [x] Ready to push to GitHub.

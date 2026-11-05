@@ -60,26 +60,30 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(readOnly = true)
-    public PagedResponse<PostResponse> getAllPosts(int page, int size, String sortBy, String sortDir, String title) {
+    public PagedResponse<PostResponse> getAllPosts(int page, int size, String sortBy, String sortDir,
+                                                  String title, String content, Long authorId) {
         validatePageNumberAndSize(page, size);
 
         Sort.Direction direction = "asc".equalsIgnoreCase(sortDir) ? Sort.Direction.ASC : Sort.Direction.DESC;
         String safeSortBy = sanitizeSortField(sortBy);
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, safeSortBy));
 
+        String cleanTitle = StringUtils.hasText(title) ? title.trim() : null;
+        String cleanContent = StringUtils.hasText(content) ? content.trim() : null;
+
         Page<Post> postsPage;
-        if (StringUtils.hasText(title)) {
-            postsPage = postRepository.findByTitleContainingIgnoreCase(title.trim(), pageable);
+        if (cleanTitle != null || cleanContent != null || authorId != null) {
+            postsPage = postRepository.searchPosts(cleanTitle, cleanContent, authorId, pageable);
         } else {
             postsPage = postRepository.findAll(pageable);
         }
 
-        List<PostResponse> content = postsPage.getContent().stream()
+        List<PostResponse> contentList = postsPage.getContent().stream()
                 .map(postMapper::toPostResponse)
                 .toList();
 
         return PagedResponse.<PostResponse>builder()
-                .content(content)
+                .content(contentList)
                 .page(postsPage.getNumber())
                 .size(postsPage.getSize())
                 .totalElements(postsPage.getTotalElements())
@@ -153,4 +157,3 @@ public class PostServiceImpl implements PostService {
         return "createdAt";
     }
 }
-

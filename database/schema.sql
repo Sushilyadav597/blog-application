@@ -1,23 +1,22 @@
 -- ==============================================================================
--- RESTful Blog Application API - Database Schema Definition
--- Database: blog_application (MySQL 8 compatible)
+-- RESTful Blog Application API - MySQL 8 Database Schema Definition
+-- Database: blog_db
 -- ==============================================================================
 
--- Create Database if it does not already exist
-CREATE DATABASE IF NOT EXISTS blog_application
+-- Create database if it does not exist
+CREATE DATABASE IF NOT EXISTS blog_db
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
-USE blog_application;
+USE blog_db;
 
--- Drop tables in reverse order of foreign key dependency if recreating
+-- Drop tables in reverse order of foreign key dependency
 DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS users;
 
 -- ------------------------------------------------------------------------------
 -- 1. USERS Table
--- Stores user accounts, authentication credentials, and system roles.
 -- ------------------------------------------------------------------------------
 CREATE TABLE users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -34,7 +33,6 @@ CREATE INDEX idx_users_username ON users(username);
 
 -- ------------------------------------------------------------------------------
 -- 2. POSTS Table
--- Stores blog post articles created by registered users.
 -- ------------------------------------------------------------------------------
 CREATE TABLE posts (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -55,7 +53,6 @@ CREATE INDEX idx_posts_created_at ON posts(created_at);
 
 -- ------------------------------------------------------------------------------
 -- 3. COMMENTS Table
--- Stores comments posted by registered users on specific blog posts.
 -- ------------------------------------------------------------------------------
 CREATE TABLE comments (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -77,4 +74,3 @@ CREATE TABLE comments (
 CREATE INDEX idx_comments_post_id ON comments(post_id);
 CREATE INDEX idx_comments_author_id ON comments(author_id);
 CREATE INDEX idx_comments_created_at ON comments(created_at);
-

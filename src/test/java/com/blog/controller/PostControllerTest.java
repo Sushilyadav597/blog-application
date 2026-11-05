@@ -28,7 +28,6 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -97,12 +96,14 @@ class PostControllerTest {
                 .last(true)
                 .build();
 
-        when(postService.getAllPosts(anyInt(), anyInt(), anyString(), anyString(), any())).thenReturn(pagedResponse);
+        when(postService.getAllPosts(anyInt(), anyInt(), anyString(), anyString(), any(), any(), any()))
+                .thenReturn(pagedResponse);
 
         mockMvc.perform(get("/api/posts"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].title").value("Spring Boot 3 Exploration"))
-                .andExpect(jsonPath("$.totalElements").value(1));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.content[0].title").value("Spring Boot 3 Exploration"))
+                .andExpect(jsonPath("$.data.totalElements").value(1));
     }
 
     @Test
@@ -112,8 +113,9 @@ class PostControllerTest {
 
         mockMvc.perform(get("/api/posts/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("Spring Boot 3 Exploration"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.title").value("Spring Boot 3 Exploration"));
     }
 
     @Test
@@ -123,6 +125,7 @@ class PostControllerTest {
 
         mockMvc.perform(get("/api/posts/99"))
                 .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.status").value(404));
     }
 
@@ -155,8 +158,9 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.title").value("Spring Boot 3 Exploration"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.title").value("Spring Boot 3 Exploration"));
     }
 
     @Test
@@ -175,6 +179,7 @@ class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.status").value(403))
                 .andExpect(jsonPath("$.message").value("You do not have permission to update this post."));
     }
@@ -191,4 +196,3 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.message").value("Post deleted successfully"));
     }
 }
-

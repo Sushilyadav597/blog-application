@@ -88,8 +88,9 @@ class CommentControllerTest {
 
         mockMvc.perform(get("/api/posts/1/comments"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(50))
-                .andExpect(jsonPath("$[0].content").value("Insightful post!"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data[0].id").value(50))
+                .andExpect(jsonPath("$.data[0].content").value("Insightful post!"));
     }
 
     @Test
@@ -99,8 +100,9 @@ class CommentControllerTest {
 
         mockMvc.perform(get("/api/comments/50"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(50))
-                .andExpect(jsonPath("$.content").value("Insightful post!"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.id").value(50))
+                .andExpect(jsonPath("$.data.content").value("Insightful post!"));
     }
 
     @Test
@@ -126,8 +128,9 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(50))
-                .andExpect(jsonPath("$.content").value("Insightful post!"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.id").value(50))
+                .andExpect(jsonPath("$.data.content").value("Insightful post!"));
     }
 
     @Test
@@ -142,6 +145,7 @@ class CommentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.status").value(403));
     }
 
@@ -157,4 +161,3 @@ class CommentControllerTest {
                 .andExpect(jsonPath("$.message").value("Comment deleted successfully"));
     }
 }
-
