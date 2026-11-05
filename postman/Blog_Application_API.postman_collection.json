@@ -18,6 +18,11 @@
   "variable": [
     {
       "key": "baseUrl",
+      "value": "https://blog-application-api-v1.onrender.com",
+      "type": "string"
+    },
+    {
+      "key": "localUrl",
       "value": "http://localhost:8080",
       "type": "string"
     },
