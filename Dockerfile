@@ -37,3 +37,4 @@ EXPOSE 8080
 
 # Configure container memory limits and execution
 ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
+
