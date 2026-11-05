@@ -70,14 +70,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
 
-                        // Public OpenAPI and Swagger UI endpoints
+                        // Public OpenAPI and Swagger UI endpoints, root redirect, and errors
                         .requestMatchers(
+                                "/",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
                                 "/webjars/**",
-                                "/h2-console/**"
+                                "/h2-console/**",
+                                "/error"
                         ).permitAll()
 
                         // All mutating endpoints (POST, PUT, DELETE) require authentication
